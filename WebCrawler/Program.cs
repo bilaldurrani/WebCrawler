@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WebCrawler
 {
-    using System.IO;
-    using System.Net;
-    using System.Net.Sockets;
-
     class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             var webCrawler = new WebCrawler();
             var siteMap = webCrawler.StartCrawl(@"http://wiprodigital.com/");
 
-            Console.WriteLine(siteMap);
+            Console.WriteLine("______________________________");
+            Console.WriteLine("SITE MAP");
+            Console.WriteLine("______________________________");
+            siteMap.ForEach(Console.WriteLine);
+            Console.WriteLine("______________________________");
+
+            Console.ReadKey();
         }
     }
 }

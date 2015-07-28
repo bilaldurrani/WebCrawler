@@ -1,33 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Net;
+using System.Text.RegularExpressions;
 
 namespace WebCrawler
 {
-    using System.IO;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Text.RegularExpressions;
-
-    using Microsoft.SqlServer.Server;
-
     class WebPage
     {
-        private string address;
-
+        public string Address { get; set; }
+        
         public WebPage(string address)
         {
-            this.address = address;
+            this.Address = address;
         }
 
-        public string GetBody()
+        private string GetBody()
         {
-            var request = WebRequest.Create(this.address);
-
+            var request = WebRequest.Create(this.Address);
             request.GetRequestStreamAsync();
-            request.Method = "GET";
 
             try
             {
@@ -35,14 +27,14 @@ namespace WebCrawler
                 var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
                 return responseString;
             }
-            catch (WebException ex)
+            catch (WebException)
             {
-                Console.WriteLine("The uri is not reachable: {0}, Status: {1}", this.address, ex.Status);
+                // Uri might not be reachable if its a resource. Can optimize by not trying to go to resources.
                 return string.Empty;
             }
         }
 
-        public List<string> GetUris()
+        private List<string> GetUris()
         {
             var body = this.GetBody();
 

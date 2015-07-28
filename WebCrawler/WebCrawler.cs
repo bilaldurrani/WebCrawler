@@ -1,66 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace WebCrawler
 {
-    using System.IO;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Text.RegularExpressions;
-
     class WebCrawler
     {
-        private List<string> crawledPages = null;
-
-        private List<string> siteMap = null;
+        private List<string> crawledPages;
 
         public List<string> StartCrawl(string uri)
         {
             this.crawledPages = new List<string> { uri };
-            this.siteMap = new List<string>();
 
             var page = new WebPage("http://wiprodigital.com/");
 
             Console.WriteLine("Starting Crawl with: " + uri);
             this.Crawl(page);
 
-            return crawledPages;
+            return this.crawledPages;
         }
 
         private void Crawl(WebPage page)
         {
+            Console.WriteLine("Crawling to: {0}", page.Address);
+
             var uris = page.GetFilteredUris(this.UriFilter);
             var pageList = new List<WebPage>();
 
             uris.ForEach(
                 uri =>
                     {
+                        // Checking if we have already been to this page to avoid cirular loop.
                         if (crawledPages.Contains(uri))
                         {
-                            Console.WriteLine("Already crawled to: " + uri);
                             return;
                         }
 
-                        Console.WriteLine(uri);
                         pageList.Add(new WebPage(uri));
-                        
                         this.crawledPages.Add(uri);
                     });
 
-            pageList.ForEach(this.Crawl);
+            Parallel.ForEach(pageList, this.Crawl);
         }
 
         private bool UriFilter(string uri)
         {
+            // Simple check for domain. Should use Regex.
             if (uri.Contains("wiprodigital.com"))
             {
                 return true;
             }
 
-            Console.WriteLine("Won't crawl to uri as its out of the domain:" + uri);
+            //Won't crawl to uri as its out of the domain.
             return false;
         }
     }
