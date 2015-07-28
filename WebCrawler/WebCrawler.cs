@@ -7,17 +7,20 @@ namespace WebCrawler
     class WebCrawler
     {
         private List<string> crawledPages;
+        private List<string> externalPages;
 
-        public List<string> StartCrawl(string uri)
+        public void StartCrawl(string uri, out List<string> internalPages, out List<string> otherPages)
         {
             this.crawledPages = new List<string> { uri };
+            this.externalPages = new List<string>();
 
             var page = new WebPage("http://wiprodigital.com/");
 
             Console.WriteLine("Starting Crawl with: " + uri);
             this.Crawl(page);
 
-            return this.crawledPages;
+            internalPages = this.crawledPages;
+            otherPages = this.externalPages;
         }
 
         private void Crawl(WebPage page)
@@ -50,8 +53,13 @@ namespace WebCrawler
             {
                 return true;
             }
-
+            
             //Won't crawl to uri as its out of the domain.
+            if (!this.externalPages.Contains(uri))
+            {
+                this.externalPages.Add(uri);
+            }
+
             return false;
         }
     }
