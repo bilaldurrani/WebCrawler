@@ -14,9 +14,10 @@ namespace WebCrawler
     {
         private static void Main(string[] args)
         {
-            var page = new WebPage(new Uri("http://wiprodigital.com/"));
+            var webCrawler = new WebCrawler();
+            var siteMap = webCrawler.StartCrawl(@"http://wiprodigital.com/");
 
-            page.GetBody();
+            Console.WriteLine(siteMap);
         }
     }
 }
